@@ -1,159 +1,34 @@
-<!doctype html>
-<html>
-<!-- Test notifications functions -->
+<!DOCTYPE HTML>
+<html style="height: 100%">
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="utf-8">
-	<title>Make Mockdata</title>
-	<link rel="shortcut icon" href="images/favicon.ico" />
-	<script src="https://sapui5.hana.ondemand.com/1.50.7/resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap"
-	 data-sap-ui-theme="sap_belize" data-sap-ui-libs="sap.m" data-sap-ui-bindingSyntax="complex" data-sap-ui-xx-bindingSyntax="complex"
-	 data-sap-ui-preload="async" data-sap-ui-compatVersion="edge" data-sap-ui-language="en" data-sap-ui-resourceroots='{
-			"localService": "localService",
-			"make": "."
-	}'>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<title>sap.ui.demo.fiori2</title>
+
+	<script id="sap-ui-bootstrap"
+			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.f, sap.uxap, sap.ui.layout"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-resourceroots='{
+				"sap.ui.demo.fiori2": "",
+				"sap.ui.demo.mock": "https://sapui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/"
+			}'>
 	</script>
 
-	<script type="text/javascript">
-		sap.ui.getCore().attachInit(function () {
-
-			sap.ui.require([
-				"sap/ui/core/util/MockServer",
-				"sap/m/Page",
-				"sap/m/Text",
-				"sap/m/Button",
-				"sap/m/HBox",
-				"make/Download"
-			], function (MockServer, Page, Text, Button, HBox, Download) {
-				"use strict";
-
-				var Download = new Download();
-
-				var oModel = new sap.ui.model.json.JSONModel();
-				sap.ui.getCore().setModel(oModel);
-
-				// mockserver.init();
-				var oMockServer = new MockServer();
-
-				oMockServer.simulate("localService/metadata.xml", {
-					sMockdataBaseUrl: "localService/mockdata",
-					bGenerateMissingMockData: true
-				});
-
-				oModel.setProperty("/EntitySets", oMockServer._mEntitySets);
-
-				/**
-				* Event handler opens displays entity set data table
-				*/
-				var onEntitySetPress = function(oEvent){
-					var oContext=oEvent.getSource().getBindingContext();
-
-					var oEntitySet = oContext.oModel.getProperty(oContext.sPath);
-					var oEntityType = oMockServer._mEntityTypes[oEntitySet.type];
-					var oSetData = oMockServer.getEntitySetData(oEntitySet.name);
-
-					var oContentPage = new Page({
-						title: "Mockdata",
-						content: [
-							new sap.ui.core.ComponentContainer({
-								height : "100%",
-								name : "make.entitySetTable",
-								settings : {
-									entitySet: oEntitySet,
-									entityType: oEntityType,
-									entitySetData: oSetData
-								}
-							})
-						]
-
-					});
-
-					oSplitApp.removeAllDetailPages();
-					oSplitApp.addDetailPage(oContentPage);
-
-				};
-
-				var downloadAllEntitySets = function(oEvent) {
-					var oEntitySets = oModel.getProperty("/EntitySets");
-					for (var sEntitySet in oEntitySets) {
-						console.log(sEntitySet);
-						Download.downloadObjectAsJson(oMockServer.getEntitySetData(sEntitySet) ,sEntitySet)
-					}
-				};
-
-				var onEntitySetDownload = function(oEvent){
-					var oContext=oEvent.getSource().getBindingContext();
-
-					var oEntitySet = oContext.oModel.getProperty(oContext.sPath);
-					var oSetData = oMockServer.getEntitySetData(oEntitySet.name);
-
-					Download.downloadObjectAsJson(oSetData,oEntitySet.name)
-				};
-
-				// function downloadObjectAsJson(oExportObj, sExportName){
-				// 	var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(oExportObj, null,4));
-				// 	var downloadAnchorNode = document.createElement('a');
-				// 	downloadAnchorNode.setAttribute("href",     dataStr);
-				// 	downloadAnchorNode.setAttribute("download", sExportName + ".json");
-				// 	document.body.appendChild(downloadAnchorNode); // required for firefox
-				// 	downloadAnchorNode.click();
-				// 	downloadAnchorNode.remove();
-				// }
-
-				var oList = new sap.m.List({
-					headerText: "Entity Sets",
-					items: {
-						path: "/EntitySets",
-						template: new sap.m.CustomListItem({
-							content: [
-								new sap.m.Link({
-									text:"{name}",
-									press: onEntitySetPress
-								}),
-								new sap.ui.core.Icon({
-									src: "sap-icon://download",
-									press: onEntitySetDownload
-								})
-							]
-								
-						})
-					}
-					
-				});
-
-				var oSplitApp = new sap.m.SplitApp();
-
-				var oMasterPage = new Page({
-					title: "Make Mockdata",
-					content: [
-						new Text({
-							text: "Put metadata.xml file into the localService folder."
-						}),
-						oList,
-						new Button({
-							text: "Download All",
-							press: downloadAllEntitySets
-						})
-
-					]
-
-				});
-
-				oMasterPage.addStyleClass("SapUiContentPadding");
-				oSplitApp.addMasterPage(oMasterPage);
-				oSplitApp.placeAt("content");
-				// app.addPage(page1);
-				// app.placeAt("content");
-
-
-			});
-
+	<script>
+		sap.ui.getCore().attachInit(function() {
+			new sap.ui.core.ComponentContainer({
+				height : "100%",
+				name : "sap.ui.demo.fiori2"
+			}).placeAt("content");
 		});
-
 	</script>
 </head>
 
-<body class="sapUiBody" role="application" id="content"></body>
+<body class="sapUiBody sapUiSizeCompact" id="content"></body>
 
 </html>
