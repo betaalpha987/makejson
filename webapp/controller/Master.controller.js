@@ -9,12 +9,31 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.Master", {
-		
+
 		onInit: function () {
 			this.oView = this.getView();
 			this.oProductsTable = this.getView().byId("productsTable");
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;
+		},
+
+		onUploadChange: function(oEvent) {
+
+			var oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
+			
+			if(oFile && window.FileReader){  
+				var oReader = new FileReader();  
+			   	oReader.onload = this._onUploadComplete;
+			   	oReader.readAsText(file);  
+			}
+			
+		},
+
+		_onUploadComplete: function(oEvent) {
+			
+			var sResult= oEvent.target.result; //string in CSV 
+			alert(sResult);
+
 		},
 
         onListItemPress: function (oEvent) {
