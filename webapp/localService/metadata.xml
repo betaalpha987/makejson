@@ -1,0 +1,63 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" 
+    xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
+    xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="/WESP/NOTIFICATION_SRV" xml:lang="en" sap:schema-version="1">
+            <EntityType Name="UserNotification" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="appKey"/>
+                    <PropertyRef Name="notificationId"/>
+                </Key>
+                <Property Name="appKey" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Application Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="notificationId" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Notification ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="message" Type="Edm.String" Nullable="false" sap:label="Message" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="actioned" Type="Edm.Boolean" Nullable="false" sap:label="Notification Actioned" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="flagged" Type="Edm.Boolean" Nullable="false" sap:label="Notification Flagged" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="notificationType" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Notification Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="notificationTypeDesc" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Notif. Type Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="objectType" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Notification Obj. Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="objectKey" Type="Edm.String" Nullable="false" sap:label="Notification Obj. Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="createdTime" Type="Edm.DateTime" Nullable="false" Precision="0" sap:label="Created Time" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Application" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="appKey"/>
+                </Key>
+                <Property Name="appKey" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Application Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <NavigationProperty Name="Notifications" Relationship="/WESP/NOTIFICATION_SRV.Application_UserNotification_Assoc" FromRole="FromRole_Application_UserNotification_Assoc" ToRole="ToRole_Application_UserNotification_Assoc"/>
+            </EntityType>
+            <Association Name="Application_UserNotification_Assoc" sap:content-version="1">
+                <End Type="/WESP/NOTIFICATION_SRV.Application" Multiplicity="1" Role="FromRole_Application_UserNotification_Assoc"/>
+                <End Type="/WESP/NOTIFICATION_SRV.UserNotification" Multiplicity="*" Role="ToRole_Application_UserNotification_Assoc"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_Application_UserNotification_Assoc">
+                        <PropertyRef Name="appKey"/>
+                    </Principal>
+                    <Dependent Role="ToRole_Application_UserNotification_Assoc">
+                        <PropertyRef Name="appKey"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="/WESP/NOTIFICATION_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="Notifications" EntityType="/WESP/NOTIFICATION_SRV.UserNotification" sap:creatable="false" sap:pageable="false" sap:addressable="false" sap:requires-filter="true" sap:content-version="1"/>
+                <EntitySet Name="Applications" EntityType="/WESP/NOTIFICATION_SRV.Application" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <AssociationSet Name="Application_UserNotification_AssocSet" Association="/WESP/NOTIFICATION_SRV.Application_UserNotification_Assoc" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="Applications" Role="FromRole_Application_UserNotification_Assoc"/>
+                    <End EntitySet="Notifications" Role="ToRole_Application_UserNotification_Assoc"/>
+                </AssociationSet>
+                <FunctionImport Name="ActionNotification" ReturnType="/WESP/NOTIFICATION_SRV.UserNotification" EntitySet="Notifications" m:HttpMethod="POST" sap:label="Action Notification">
+                    <Parameter Name="notificationId" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="actioned" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="application" Type="Edm.String" Mode="In" MaxLength="4"/>
+                </FunctionImport>
+                <FunctionImport Name="FlagNotification" ReturnType="/WESP/NOTIFICATION_SRV.UserNotification" EntitySet="Notifications" m:HttpMethod="POST" sap:label="Flag Notification">
+                    <Parameter Name="notificationId" Type="Edm.String" Mode="In" MaxLength="8"/>
+                    <Parameter Name="flagged" Type="Edm.Boolean" Mode="In"/>
+                    <Parameter Name="application" Type="Edm.String" Mode="In" MaxLength="4"/>
+                </FunctionImport>
+            </EntityContainer>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="http://wan4d.weaveabilitysap.com:8000/sap/opu/odata/WESP/Notification_SRV/$metadata"/>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="http://wan4d.weaveabilitysap.com:8000/sap/opu/odata/WESP/Notification_SRV/$metadata"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
