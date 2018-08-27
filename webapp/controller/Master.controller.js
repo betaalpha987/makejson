@@ -1,11 +1,8 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	'sap/ui/model/Sorter',
-	'sap/m/MessageBox'
-], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox) {
+	"sap/ui/core/util/MockServer"	
+], function (JSONModel, Controller, MockServer) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.Master", {
@@ -21,19 +18,39 @@ sap.ui.define([
 
 			var oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
 			
-			if(oFile && window.FileReader){  
-				var oReader = new FileReader();  
-			   	oReader.onload = this._onUploadComplete;
-			   	oReader.readAsText(file);  
+			if(oFile && window.FileReader){
+
+				var oReader = new FileReader();
+
+				if (oFile.type === "application/json") {
+					oReader.onload = this._onJSONUploaded;
+				} else if (oFile.type === "text/xml") {
+					oReader.onload = this._onXMLUploaded;
+				}
+
+				oReader.readAsText(oFile);  
+				   
 			}
 			
 		},
 
-		_onUploadComplete: function(oEvent) {
+		_onJSONUploaded: function(oEvent) {
 			
-			var sResult= oEvent.target.result; //string in CSV 
-			alert(sResult);
+			var sJSON= oEvent.target.result;
+			var oJSON = JSON.parse(sJSON);
+			console.log(oJSON);
 
+		},
+
+		_onXMLUploaded: function(oEvent) {
+			
+			var sXMLString= oEvent.target.result;
+			alert(sXMLString);
+
+				var oMockServer = new MockServer();
+
+				oMockServer.simulate(sXMLString);
+				console.log(oMockServer._mEntitySets);
 		},
 
         onListItemPress: function (oEvent) {
