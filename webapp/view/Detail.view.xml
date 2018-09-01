@@ -1,10 +1,15 @@
-<core:View displayBlock="true"
-		   height="100%"
-  		   controllerName="sap.ui.demo.fiori2.controller.Detail"
-		   xmlns="sap.m"
-		   xmlns:core="sap.ui.core">
-		   
-   <Text text="sdfsdfsdfsdf"/>
+<core:View displayBlock="true" height="100%" controllerName="sap.ui.demo.fiori2.controller.Detail" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:core="sap.ui.core">
+
+	<!-- <t:Table id="esTable" selectionMode="None" rows="{/tableData}" columnMenuOpen="onColumnMenuOpen" columnSelect="onColumnSelect" >
+		<t:toolbar>
+			<Toolbar>
+				<Title id="title" text="{/EntitySet/name}"></Title>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://download" tooltip="Download entity set" press="onDownloadPressed"/>
+			</Toolbar>
+		</t:toolbar>
+	</t:Table> -->
+
 </core:View>
 
 	<!-- <ObjectPageLayout id="ObjectPageLayout"

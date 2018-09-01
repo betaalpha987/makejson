@@ -5,61 +5,74 @@ sap.ui.define([
 ], function (JSONModel, Controller, MockServer) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.fiori2.controller.Master", {
+	var oController = Controller.extend("sap.ui.demo.fiori2.controller.Master", {});
 
-		onInit: function () {
-			this.oView = this.getView();
-			this.oProductsTable = this.getView().byId("productsTable");
-			this.oRouter = this.getOwnerComponent().getRouter();
-			this._bDescendingSort = false;
-		},
+	oController.prototype.onInit = function () {
 
-		onUploadChange: function(oEvent) {
+		// this.oView = this.getView();
+		// this.oProductsTable = this.getView().byId("productsTable");
+		this.oRouter = this.getOwnerComponent().getRouter();
+		// this._bDescendingSort = false;
+		this.mockServer = new MockServer();
 
-			var oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
-			
-			if(oFile && window.FileReader){
+		this.getView().setModel();
 
-				var oReader = new FileReader();
+	};
 
-				if (oFile.type === "application/json") {
-					oReader.onload = this._onJSONUploaded;
-				} else if (oFile.type === "text/xml") {
-					oReader.onload = this._onXMLUploaded;
-				}
+	oController.prototype.onUploadChange = function(oEvent) {
 
-				oReader.readAsText(oFile);  
-				   
+		var oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
+		
+		if(oFile && window.FileReader){
+
+			var oReader = new FileReader();
+
+			if (oFile.type === "application/json") {
+				oReader.onload = this._onJSONUploaded;
+			} else if (oFile.type === "text/xml") {
+				oReader.onload = this._onXMLUploaded.bind(this);
 			}
-			
-		},
 
-		_onJSONUploaded: function(oEvent) {
-			
-			var sJSON= oEvent.target.result;
-			var oJSON = JSON.parse(sJSON);
-			console.log(oJSON);
-
-		},
-
-		_onXMLUploaded: function(oEvent) {
-			
-			var sXMLString= oEvent.target.result;
-			alert(sXMLString);
-
-				var oMockServer = new MockServer();
-
-				oMockServer.simulate(sXMLString);
-				console.log(oMockServer._mEntitySets);
-		},
-
-        onListItemPress: function (oEvent) {
-			var productPath = oEvent.getSource().getBindingContext("products").getPath(),
-				product = productPath.split("/").slice(-1).pop();
-
-			this.oRouter.navTo("detail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, product: product});
+			oReader.readAsText(oFile);  
+				
 		}
+		
+	};
 
+	oController.prototype._onJSONUploaded = function(oEvent) {
+		
+		var sJSON= oEvent.target.result;
+		var oJSON = JSON.parse(sJSON);
+		console.log(oJSON);
+
+	};
+
+	oController.prototype._onXMLUploaded = function(oEvent) {
+		
+		var sXMLString= oEvent.target.result;
+		var oModel = this.getView().getModel();
+
+		this.mockServer.simulate(sXMLString);
+		oModel.setProperty("/EntitySets", this.mockServer._mEntitySets);
+
+	};
+
+	oController.prototype.onListItemPress = function (oEvent) {
+
+		var oContext = oEvent.getSource().getBindingContext(),
+			oModel = oContext.oModel,
+			oEntitySet = oModel.getProperty(oContext.sPath),
+			aSetData = this.mockServer.getEntitySetData(oEntitySet.name);
+
+			oModel.setProperty("/EntitySet",oEntitySet);
+			oModel.setProperty("/SetData",aSetData);
+
+		this.oRouter.navTo("detail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, entitySet: oEntitySet.name});
+	}
+
+	return oController;
+
+});
 		// onSearch: function (oEvent) {
 		// 	var oTableSearchState = [],
 		// 		sQuery = oEvent.getParameter("query");
@@ -88,5 +101,3 @@ sap.ui.define([
         // },
 
        
-	});
-}, true);

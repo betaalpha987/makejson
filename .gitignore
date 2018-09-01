@@ -23,6 +23,9 @@ npm-debug.log
 .DS_Store
 /*.env
 
+# VS Code specific
+/.vscode
+
 # =========================
 # Operating System Files
 # =========================
