@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/UploadCollectionParameter",
-], function (Controller, UploadCollectionParameter) {
+	"sap/ui/demo/fiori2/model/dateFormatter"
+], function (Controller, UploadCollectionParameter, dateFormatter) {
 	"use strict";
 
 	var oController = Controller.extend("sap.ui.demo.fiori2.controller.Detail", {});
@@ -23,7 +24,7 @@ sap.ui.define([
 
 		// If model is populated, show table. 
 		if (aSetData) {
-			this.populateTable(oEntitySet, aSetData);
+			this.populateTable(aSetData);
 
 		// If model not populated and layout is set to show Detail, route back to localhost
 		} else {
@@ -43,37 +44,45 @@ sap.ui.define([
 	/**
 	 *  Sets model and constructs table
 	 */
-	oController.prototype.populateTable = function(oEntitySet, aSetData) {
+	oController.prototype.populateTable = function(aSetData) {
 
-		var oEntityProperties = oEntitySet.keysType;
 		var oTable = this.getView().byId("esTable");
-		var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
+		// var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
 		var self = this;
+
+		oTable.removeAllColumns();
 
 		// Populate table columns
 		for (var sKey in aSetData[0]) {
 			//aTitles.push(sKey);
-			var sPropertyType = this.getPropertyType(oEntityProperties,sKey);
+			var sPropertyType = typeof(sKey);
 
 			var oInput = null;
 			switch (sPropertyType) {
 
-				case "Boolean":
+				case "boolean":
 					oInput = new sap.m.CheckBox({selected: '{' + sKey + '}' });
 					break;
-				case "DateTime":
-					oInput = new sap.m.DateTimePicker({
-						displayFormat:"short",
-						value: {
-							parts:[sKey],
-							formatter: self.formatter.parseJSONDate
-						}
-					});
-					break;
-				case "String":
-					oInput = new sap.m.Input({value:"{"+sKey+"}"})
-					break;
 
+				case "string":
+
+					// Try parsing the first value of this field as a JSON format date
+					var sSample = aSetData[0][sKey];
+					var oDate = dateFormatter.parseJSONDate(sSample);
+					if (oDate) {
+
+						oInput = new sap.m.DateTimePicker({
+							displayFormat:"short",
+							value: {
+								parts:[sKey],
+								formatter: dateFormatter.parseJSONDate
+							}
+						});
+					
+					} else {
+						oInput = new sap.m.Input({value:"{"+sKey+"}"})
+					}
+				
 			}
 			// <DateTimePicker
 			// id="DTP3"
@@ -102,18 +111,18 @@ sap.ui.define([
 	 * @param {*} oEntityProperties 
 	 * @param {*} sKey 
 	 */
-	oController.prototype.getPropertyType = function(oEntityProperties,sKey) {
+	// oController.prototype.getPropertyType = function(oEntityProperties,sKey) {
 
-		for (var i = 0; i < oEntityProperties.length; i++) {
+	// 	for (var i = 0; i < oEntityProperties.length; i++) {
 
-			if (sKey === oEntityProperties[i].name) {
-				return oEntityProperties[i].type;
-			}
+	// 		if (sKey === oEntityProperties[i].name) {
+	// 			return oEntityProperties[i].type;
+	// 		}
 
-		}
-		return null;
+	// 	}
+	// 	return null;
 
-	};
+	// };
 
 	// oController.prototype.onDownloadPress = function(oEvent) {
 	// 	console.log(oEvent);
