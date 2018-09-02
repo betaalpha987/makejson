@@ -15,8 +15,6 @@ sap.ui.define([
 		// this._bDescendingSort = false;
 		this.mockServer = new MockServer();
 
-		this.getView().setModel();
-
 	};
 
 	oController.prototype.onUploadChange = function(oEvent) {
@@ -54,7 +52,7 @@ sap.ui.define([
 
 		this.mockServer.simulate(sXMLString);
 		oModel.setProperty("/EntitySets", this.mockServer._mEntitySets);
-
+		oModel.setProperty("/ESListTableVisible", true);
 	};
 
 	oController.prototype.onListItemPress = function (oEvent) {

@@ -15,12 +15,15 @@ sap.ui.define([
 	 * UI5 onRouteMatched event.
 	 */
 	oController.prototype._onRouteMatched = function(){
-		var oComponent = this.getOwnerComponent();
-		var oModel = oComponent.getModel();
-		var oEntitySet = oModel.getProperty("/EntitySet");
+
+		var oComponent = this.getOwnerComponent(),
+			oModel = oComponent.getModel(),
+			oEntitySet = oModel.getProperty("/EntitySet"),
+			aSetData = oModel.getProperty("/SetData");
+
 		// If model is populated, show table. 
-		if (oEntitySet) {
-			console.log(oEntitySet);
+		if (aSetData) {
+			this.populateTable(oEntitySet, aSetData);
 
 		// If model not populated and layout is set to show Detail, route back to localhost
 		} else {
@@ -32,98 +35,111 @@ sap.ui.define([
 				oRouter.navTo("master");
 	
 			}
+
 		}
 
-		// 
 	};
-
-	return oController;
-
-});
 
 	/**
 	 *  Sets model and constructs table
 	 */
-	// oController.prototype.populateTable = function() {
-	// 	debugger;
-	// 	var sEntitySetName = oComponent.getEntitySet().name;
-	// 	var oEntityProperties = oComponent.getEntityType().properties;
-	// 	var oEntitySetData = oComponent.getEntitySetData();
-	// 	var oView = this.getView();
-	// 	var oTable = oView.byId("esTable");
-	// 	var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
-	// 	var self = this;
+	oController.prototype.populateTable = function(oEntitySet, aSetData) {
 
-	// 	var oModel = oView.getModel();
-	// 	oModel.setData({
-	// 		title: sEntitySetName,
-	// 		tableData: oEntitySetData
-	// 	});
+		var oEntityProperties = oEntitySet.keysType;
+		var oTable = this.getView().byId("esTable");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
+		var self = this;
 
-	// 	// Populate table columns
-	// 	for (var sKey in oEntitySetData[0]) {
-	// 		//aTitles.push(sKey);
-	// 		var sPropertyType = this.getPropertyType(oEntityProperties,sKey);
+		// Populate table columns
+		for (var sKey in aSetData[0]) {
+			//aTitles.push(sKey);
+			var sPropertyType = this.getPropertyType(oEntityProperties,sKey);
 
-	// 		var oInput = null;
-	// 		switch (sPropertyType) {
+			var oInput = null;
+			switch (sPropertyType) {
 
-	// 			case "String":
-	// 				oInput = new sap.m.Input({value:"{"+sKey+"}"})
-	// 				break;
-	// 			case "Boolean":
-	// 				oInput = new sap.m.CheckBox({selected: '{' + sKey + '}' });
-	// 				break;
-	// 			case "DateTime":
-	// 				oInput = new sap.m.DateTimePicker({
-	// 					displayFormat:"short",
-	// 					value: {
-	// 						parts:[sKey],
-	// 						formatter: self.formatter.parseJSONDate
-	// 					}
-						
-	// 				});
-	// 		}
-	// 		// <DateTimePicker
-	// 		// id="DTP3"
-	// 		// displayFormat="short"
-	// 		// change="handleChange"/>
+				case "Boolean":
+					oInput = new sap.m.CheckBox({selected: '{' + sKey + '}' });
+					break;
+				case "DateTime":
+					oInput = new sap.m.DateTimePicker({
+						displayFormat:"short",
+						value: {
+							parts:[sKey],
+							formatter: self.formatter.parseJSONDate
+						}
+					});
+					break;
+				case "String":
+					oInput = new sap.m.Input({value:"{"+sKey+"}"})
+					break;
 
-	// 		// Add column for this property, if it's a recognised type
-	// 		if (oInput) {
+			}
+			// <DateTimePicker
+			// id="DTP3"
+			// displayFormat="short"
+			// change="handleChange"/>
 
-	// 			var oColumn = new sap.ui.table.Column({
-	// 				label: new sap.m.Label({text: sKey}),
-	// 				minWidth: 200,
-	// 				template: [oInput]
-	// 			})
+			// Add column for this property, if it's a recognised type
+			if (oInput) {
+
+				var oColumn = new sap.ui.table.Column({
+					label: new sap.m.Label({text: sKey}),
+					minWidth: 200,
+					template: [oInput]
+				})
 	
-	// 			oTable.addColumn(oColumn)
+				oTable.addColumn(oColumn)
 
-	// 		}
+			}
 
-	// 	}
+		}
 
-
-	// };
+	};
 
 	/**
 	 * Get variable type from entity properties list
 	 * @param {*} oEntityProperties 
 	 * @param {*} sKey 
 	 */
-	// oController.prototype.getPropertyType = function(oEntityProperties,sKey) {
+	oController.prototype.getPropertyType = function(oEntityProperties,sKey) {
 
-	// 	for (var i = 0; i < oEntityProperties.length; i++) {
+		for (var i = 0; i < oEntityProperties.length; i++) {
 
-	// 		if (sKey === oEntityProperties[i].name) {
-	// 			return oEntityProperties[i].type;
-	// 		}
+			if (sKey === oEntityProperties[i].name) {
+				return oEntityProperties[i].type;
+			}
 
-	// 	}
-	// 	return null;
+		}
+		return null;
 
+	};
+
+	// oController.prototype.onDownloadPress = function(oEvent) {
+	// 	console.log(oEvent);
+	// 	var oView = this.getView();
+	// 	var oData = oView.getModel().getData();
+	// 	Download.downloadObjectAsJson(oData.tableData, oData.title);
 	// };
+
+	oController.prototype.onFullScreenPress = function(oEvent) {
+
+		var oComponent = this.getOwnerComponent(),
+			oModel = oComponent.getModel(),
+			sName = oModel.getProperty("/EntitySet/name"),
+			oRouter = oComponent.getRouter(),
+			sLayout = oEvent.getParameter("pressed")? sap.f.LayoutType.MidColumnFullScreen : sap.f.LayoutType.TwoColumnsMidExpanded;
+
+			oRouter.navTo("detail", {layout: sLayout, entitySet: sName});
+
+	};
+
+
+
+	return oController;
+
+});
+
 
 	// /** 
 	//  * Perform index operation
@@ -149,13 +165,6 @@ sap.ui.define([
 
 	// }
 
-
-// 	oController.prototype.onDownloadPressed = function(oEvent) {
-// 		console.log(oEvent);
-// 		var oView = this.getView();
-// 		var oData = oView.getModel().getData();
-// 		Download.downloadObjectAsJson(oData.tableData, oData.title);
-// 	};
 
 // 	oController.prototype.onColumnSelect = function (oEvent) {
 
