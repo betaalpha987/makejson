@@ -11,7 +11,12 @@ sap.ui.define([
 
 		// this.oView = this.getView();
 		// this.oProductsTable = this.getView().byId("productsTable");
-		this.oRouter = this.getOwnerComponent().getRouter();
+		var oComponent = this.getOwnerComponent();
+		var oModel = oComponent.getModel();
+		oModel.setData({
+			ESListTableVisible: false
+		});
+		this.oRouter = oComponent.getRouter();
 		// this._bDescendingSort = false;
 		this.mockServer = new MockServer();
 
