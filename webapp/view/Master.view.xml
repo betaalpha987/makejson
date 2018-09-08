@@ -20,15 +20,17 @@
 		<f:content>
 			<VBox fitContainer="true">
 
-			<u:FileUploader 
-					uploadUrl=""
-					fileType="json,xml"
-					buttonText="Upload XML or JSON"  
-					maximumFileSize="1"
-					buttonOnly="true"
-					icon="sap-icon://upload"
-					change="onUploadChange"/>
-
+				<HBox>
+					<u:FileUploader 
+							uploadUrl=""
+							fileType="json,xml"
+							buttonText="Upload XML or JSON"  
+							maximumFileSize="1"
+							buttonOnly="true"
+							icon="sap-icon://upload"
+							change="onUploadChange"/>
+					<core:Icon src="sap-icon://sys-help" press="onHelpIconPress"/>
+				</HBox>
 
 				<Table id="entitySetsTable"
 						visible="{/ESListTableVisible}"

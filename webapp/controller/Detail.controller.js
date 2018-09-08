@@ -47,15 +47,15 @@ sap.ui.define([
 	oController.prototype.populateTable = function(aSetData) {
 
 		var oTable = this.getView().byId("esTable");
-		// var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
 		var self = this;
+		var oFirstSet = aSetData[0];
 
 		oTable.removeAllColumns();
 
 		// Populate table columns
-		for (var sKey in aSetData[0]) {
+		for (var sKey in oFirstSet) {
 			//aTitles.push(sKey);
-			var sPropertyType = typeof(sKey);
+			var sPropertyType = typeof(oFirstSet[sKey]);
 
 			var oInput = null;
 			switch (sPropertyType) {
@@ -67,8 +67,7 @@ sap.ui.define([
 				case "string":
 
 					// Try parsing the first value of this field as a JSON format date
-					var sSample = aSetData[0][sKey];
-					var oDate = dateFormatter.parseJSONDate(sSample);
+					var oDate = dateFormatter.parseJSONDate(oFirstSet[sKey]);
 					if (oDate) {
 
 						oInput = new sap.m.DateTimePicker({
@@ -84,10 +83,6 @@ sap.ui.define([
 					}
 				
 			}
-			// <DateTimePicker
-			// id="DTP3"
-			// displayFormat="short"
-			// change="handleChange"/>
 
 			// Add column for this property, if it's a recognised type
 			if (oInput) {
@@ -95,6 +90,8 @@ sap.ui.define([
 				var oColumn = new sap.ui.table.Column({
 					label: new sap.m.Label({text: sKey}),
 					minWidth: 200,
+					autoResizable: true,
+					resizable: true,
 					template: [oInput]
 				})
 	
@@ -124,12 +121,26 @@ sap.ui.define([
 
 	// };
 
-	// oController.prototype.onDownloadPress = function(oEvent) {
-	// 	console.log(oEvent);
-	// 	var oView = this.getView();
-	// 	var oData = oView.getModel().getData();
-	// 	Download.downloadObjectAsJson(oData.tableData, oData.title);
-	// };
+	/**
+	 * Event handler downloads table as JSON file
+	 */
+	oController.prototype.onDownloadPress = function() {
+		var oModel = this.getView().getModel(),
+			oSetData = oModel.getProperty("/SetData"),
+			sSetName = oModel.getProperty("/EntitySet/name");
+
+		//Download.downloadObjectAsJson(oData.tableData, oData.title);
+		//oObject.prototype.downloadObjectAsJson = function(oExportObj, sExportName) {
+
+		var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(oSetData, null,4));
+		var downloadAnchorNode = document.createElement('a');
+		downloadAnchorNode.setAttribute("href",     dataStr);
+		downloadAnchorNode.setAttribute("download", sSetName + ".json");
+		document.body.appendChild(downloadAnchorNode); // required for firefox
+		downloadAnchorNode.click();
+		downloadAnchorNode.remove();	
+
+	};
 
 	oController.prototype.onFullScreenPress = function(oEvent) {
 

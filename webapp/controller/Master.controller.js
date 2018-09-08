@@ -1,8 +1,11 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/util/MockServer"	
-], function (JSONModel, Controller, MockServer) {
+	"sap/ui/core/util/MockServer",
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/Text"
+], function (JSONModel, Controller, MockServer, Dialog, Button, Text) {
 	"use strict";
 
 	var oController = Controller.extend("sap.ui.demo.fiori2.controller.Master", {});
@@ -19,6 +22,29 @@ sap.ui.define([
 		this.oRouter = oComponent.getRouter();
 		// this._bDescendingSort = false;
 		this.mockServer = new MockServer();
+
+	};
+
+	oController.prototype.onHelpIconPress = function() {
+
+		var dialog = new Dialog({
+			title: 'Upload XML or JSON',
+			type: 'Message',
+				content: new Text({
+					text: 'Upload a metadata.xml file to automatically generate, edit and save sample mockdata JSON for your UI5 OPA5 tests.\n\nUpload a mockdata JSON file to edit it and save your changes.'
+				}),
+			beginButton: new Button({
+				text: 'OK',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
+
+		dialog.open();
 
 	};
 
