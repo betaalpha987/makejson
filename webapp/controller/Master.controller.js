@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (JSONModel, Controller, MockServer, Dialog, Button, Text) {
 	"use strict";
 
-	var oController = Controller.extend("sap.ui.demo.fiori2.controller.Master", {});
+	var oController = Controller.extend("makejson.app.controller.Master", {});
 
 	oController.prototype.onInit = function () {
 

@@ -1,6 +1,6 @@
 <core:View displayBlock="true"
     height="100%"
-	controllerName="sap.ui.demo.fiori2.controller.Master"
+	controllerName="makejson.app.controller.Master"
 	xmlns="sap.m"
 	xmlns:u="sap.ui.unified"
 	xmlns:f="sap.f"

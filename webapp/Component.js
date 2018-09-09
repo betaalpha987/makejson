@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(UIComponent, JSONModel) {
 	'use strict';
 
-	return UIComponent.extend('sap.ui.demo.fiori2.Component', {
+	return UIComponent.extend('makejson.app.Component', {
 
 		metadata: {
 			manifest: 'json'
@@ -20,7 +20,7 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set products demo model on this sample
-			oProductsModel = new JSONModel(jQuery.sap.getModulePath('sap.ui.demo.mock', '/products.json'));
+			oProductsModel = new JSONModel(jQuery.sap.getModulePath('makejson.mock', '/products.json'));
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, 'products');
 
@@ -29,7 +29,7 @@ sap.ui.define([
 
 		createContent: function () {
 			return sap.ui.view({
-				viewName: "sap.ui.demo.fiori2.view.App",
+				viewName: "makejson.app.view.App",
 				type: "XML"
 			});
 		}

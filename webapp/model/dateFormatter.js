@@ -5,12 +5,22 @@ sap.ui.define([], function() {
          * Return a version of the string that can be readily converted to a date by a DateTime input control
          * or null if the string cannot be converted.
          */
-        parseJSONDate: function(sDate) {
+        parseDateFromJSON: function(sDateTime) {
             try {
-                return eval('new ' + sDate.replace(/\//g, ''));
+                return eval('new ' + sDateTime.replace(/\//g, ''));
             }
             catch {
                 return null;
+            }
+        },
+
+        parseDateToJSON: function(oDateTime) {
+            try {
+                var sUTC = Date.parse(oDateTime);
+                return "/Date(" + sUTC + ")/"
+            }
+            catch {
+                return null
             }
         }
     }

@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (JSONModel, Controller) {
 	"use strict";
 
-	var oController = Controller.extend("sap.ui.demo.fiori2.controller.App", {});
+	var oController = Controller.extend("makejson.app.controller.App", {});
 	
 	oController.prototype.onInit = function () {
 		this.oOwnerComponent = this.getOwnerComponent();

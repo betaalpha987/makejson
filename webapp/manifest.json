@@ -2,7 +2,7 @@
   "_version": "1.8.0",
   "sap.ui5": {
     "rootView": {
-      "viewName": "sap.ui.demo.fiori2.view.App",
+      "viewName": "makejson.app.view.App",
       "type": "XML",
       "async": true,
       "id": "fcl"
@@ -28,7 +28,7 @@
       "config": {
         "routerClass": "sap.f.routing.Router",
         "viewType": "XML",
-        "viewPath": "sap.ui.demo.fiori2.view",
+        "viewPath": "makejson.app.view",
         "controlId": "flexibleColumnLayout",
         "transition": "slide",
         "bypassed": {},

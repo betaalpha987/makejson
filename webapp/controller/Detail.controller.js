@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/UploadCollectionParameter",
-	"sap/ui/demo/fiori2/model/dateFormatter"
+	"makejson/app/model/dateFormatter"
 ], function (Controller, UploadCollectionParameter, dateFormatter) {
 	"use strict";
 
-	var oController = Controller.extend("sap.ui.demo.fiori2.controller.Detail", {});
+	var oController = Controller.extend("makejson.app.controller.Detail", {});
 
 	oController.prototype.onInit = function() {
 		var oRouter = this.getOwnerComponent().getRouter();
@@ -54,29 +54,33 @@ sap.ui.define([
 
 		// Populate table columns
 		for (var sKey in oFirstSet) {
-			//aTitles.push(sKey);
+			
 			var sPropertyType = typeof(oFirstSet[sKey]);
-
+			var sMinWidth = 200;
 			var oInput = null;
+
 			switch (sPropertyType) {
 
 				case "boolean":
 					oInput = new sap.m.CheckBox({selected: '{' + sKey + '}' });
+					sMinWidth = 100;
 					break;
 
 				case "string":
 
 					// Try parsing the first value of this field as a JSON format date
-					var oDate = dateFormatter.parseJSONDate(oFirstSet[sKey]);
+					var oDate = dateFormatter.parseDateFromJSON(oFirstSet[sKey]);
 					if (oDate) {
 
 						oInput = new sap.m.DateTimePicker({
 							displayFormat:"short",
 							value: {
 								parts:[sKey],
-								formatter: dateFormatter.parseJSONDate
-							}
+								formatter: dateFormatter.parseDateFromJSON
+							},
+							change: this.setDate
 						});
+						sMinWidth = 250;
 					
 					} else {
 						oInput = new sap.m.Input({value:"{"+sKey+"}"})
@@ -89,7 +93,7 @@ sap.ui.define([
 
 				var oColumn = new sap.ui.table.Column({
 					label: new sap.m.Label({text: sKey}),
-					minWidth: 200,
+					minWidth: sMinWidth,
 					autoResizable: true,
 					resizable: true,
 					template: [oInput]
@@ -100,6 +104,22 @@ sap.ui.define([
 			}
 
 		}
+
+	};
+
+	/**
+	 * Event handler converts date object from DateTime picker to JSON format string and stores it in model
+	 * @param {jQuery.event} oEvent DateTime change event
+	 */
+	oController.prototype.onDateChange = function(oEvent) {
+		var oSource = oEvent.getSource();
+		var oDateTime = oSource.getDateValue();
+		var sDateTime = dateFormatter.parseDateToJSON(oDateTime);
+		var oBinding = oSource.getBinding("value");
+		var sPath = oBinding.getContext().getPath() + "/" + oBinding.getPath();
+		var oModel = oBinding.getModel();
+		
+		oModel.setProperty(sPath, sDateTime);
 
 	};
 
