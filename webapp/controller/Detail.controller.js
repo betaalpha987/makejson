@@ -1,8 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/m/UploadCollectionParameter",
-	"makejson/app/model/dateFormatter"
-], function (Controller, UploadCollectionParameter, dateFormatter) {
+	"makejson/app/model/dateFormatter",
+	"sap/m/Text",
+	"sap/m/Input",
+	"sap/m/Button"
+], function (Controller, dateFormatter, Text, Input, Button) {
 	"use strict";
 
 	var oController = Controller.extend("makejson.app.controller.Detail", {});
@@ -59,6 +61,17 @@ sap.ui.define([
 			var sMinWidth = 200;
 			var oInput = null;
 
+			var oMenu = new sap.ui.unified.Menu({
+
+				items: [
+					new sap.ui.unified.MenuItem({
+						text: "Replace column contents",
+						select: this.onReplaceContentsPress.bind(this)
+					})
+				]
+				
+			})
+
 			switch (sPropertyType) {
 
 				case "boolean":
@@ -78,13 +91,17 @@ sap.ui.define([
 								parts:[sKey],
 								formatter: dateFormatter.parseDateFromJSON
 							},
-							change: this.setDate
+							change: this.onDateChange
 						});
 						sMinWidth = 250;
 					
 					} else {
-						oInput = new sap.m.Input({value:"{"+sKey+"}"})
+						oInput = new Input({value:"{"+sKey+"}"})
 					}
+					break;
+				
+				default:
+					oInput = new Text({text:"{"+sKey+"}"});
 				
 			}
 
@@ -96,7 +113,8 @@ sap.ui.define([
 					minWidth: sMinWidth,
 					autoResizable: true,
 					resizable: true,
-					template: [oInput]
+					template: [oInput],
+					menu: oMenu
 				})
 	
 				oTable.addColumn(oColumn)
@@ -122,24 +140,6 @@ sap.ui.define([
 		oModel.setProperty(sPath, sDateTime);
 
 	};
-
-	/**
-	 * Get variable type from entity properties list
-	 * @param {*} oEntityProperties 
-	 * @param {*} sKey 
-	 */
-	// oController.prototype.getPropertyType = function(oEntityProperties,sKey) {
-
-	// 	for (var i = 0; i < oEntityProperties.length; i++) {
-
-	// 		if (sKey === oEntityProperties[i].name) {
-	// 			return oEntityProperties[i].type;
-	// 		}
-
-	// 	}
-	// 	return null;
-
-	// };
 
 	/**
 	 * Event handler downloads table as JSON file
@@ -174,7 +174,42 @@ sap.ui.define([
 
 	};
 
+	oController.prototype.onReplaceContentsPress = function(oEvent) {
 
+		var dialog = new sap.m.Dialog({
+			title: "Replace contents",
+			
+			content: [
+				new Text({
+					text: "Enter new content template",
+				}),
+				new Input({
+					value: "{/replaceContents}",
+					submit: this.onReplaceTemplate
+				}),
+			],
+			beginButton: new Button({
+				text: 'Close',
+				press: function () {
+					dialog.close();
+				},
+			}),
+			endButton: new Button({
+				text: 'OK',
+				press: this.onReplaceTemplate
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
+
+		dialog.open();
+
+	};
+
+	oController.prototype.onReplaceTemplate = function(oEvent) {
+		console.log(oEvent);
+	}
 
 	return oController;
 
