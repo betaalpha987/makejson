@@ -19,7 +19,7 @@ sap.ui.define([
 
 		var oComponent = this.getOwnerComponent(),
 			oModel = oComponent.getModel(),
-			oEntitySet = oModel.getProperty("/EntitySet"),
+			//oEntitySet = oModel.getProperty("/EntitySet"),
 			aSetData = oModel.getProperty("/SetData");
 
 		// If model is populated, show table. 
@@ -127,7 +127,7 @@ sap.ui.define([
 	oController.prototype.onDownloadPress = function() {
 		var oModel = this.getView().getModel(),
 			oSetData = oModel.getProperty("/SetData"),
-			sSetName = oModel.getProperty("/EntitySet/name");
+			sSetName = oModel.getProperty("/EntitySetName");
 
 		//Download.downloadObjectAsJson(oData.tableData, oData.title);
 		//oObject.prototype.downloadObjectAsJson = function(oExportObj, sExportName) {
@@ -146,7 +146,7 @@ sap.ui.define([
 
 		var oComponent = this.getOwnerComponent(),
 			oModel = oComponent.getModel(),
-			sName = oModel.getProperty("/EntitySet/name"),
+			sName = oModel.getProperty("/EntitySetName"),
 			oRouter = oComponent.getRouter(),
 			sLayout = oEvent.getParameter("pressed")? sap.f.LayoutType.MidColumnFullScreen : sap.f.LayoutType.TwoColumnsMidExpanded;
 

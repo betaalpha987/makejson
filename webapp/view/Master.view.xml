@@ -40,11 +40,11 @@
 									path: 'name'
 								}
 							}"
-						class="sapFDynamicPageAlignContent"
+						class="sapUiMediumMarginTop sapFDynamicPageAlignContent"
 						width="auto">
 					<columns>
 						<Column>
-							<Text text="Name" />
+							<Text text="Select an entity set" />
 						</Column>
 					</columns>
 					<items>

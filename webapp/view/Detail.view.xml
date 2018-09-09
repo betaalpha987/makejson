@@ -3,7 +3,7 @@
 	<t:Table id="esTable" selectionMode="None" alternateRowColors="true" visibleRowCountMode="Auto" rows="{/SetData}" columnMenuOpen="onColumnMenuOpen" columnSelect="onColumnSelect" >
 		<t:toolbar>
 			<Toolbar>
-				<Title id="title" text="{/EntitySet/name}"></Title>
+				<Title id="title" text="{/EntitySetName}"></Title>
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://download" tooltip="Download entity set" press="onDownloadPress"/>
 				<ToggleButton icon="sap-icon://full-screen" tooltip="Full screen" press="onFullScreenPress"/>
