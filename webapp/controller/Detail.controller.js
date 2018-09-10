@@ -66,7 +66,7 @@ sap.ui.define([
 				items: [
 					new sap.ui.unified.MenuItem({
 						text: "Replace column contents",
-						select: this.onReplaceContentsPress.bind(this)
+						select: this.onReplaceContentsPress.bind(this, sKey)
 					})
 				]
 				
@@ -174,8 +174,9 @@ sap.ui.define([
 
 	};
 
-	oController.prototype.onReplaceContentsPress = function(oEvent) {
+	oController.prototype.onReplaceContentsPress = function(sKey, oEvent) {
 
+		var oModel = this.getView().getModel();
 		var dialog = new sap.m.Dialog({
 			title: "Replace contents",
 			
@@ -184,8 +185,13 @@ sap.ui.define([
 					text: "Enter new content template",
 				}),
 				new Input({
-					value: "{/replaceContents}",
-					submit: this.onReplaceTemplate
+					id:"inputReplace",
+					submit: function(oEvent) {
+						var sValue = oEvent.getParameter("value")
+						this.onReplaceTemplate(oModel, sKey, sValue);
+						dialog.close();
+					}.bind(this)
+
 				}),
 			],
 			beginButton: new Button({
@@ -196,7 +202,11 @@ sap.ui.define([
 			}),
 			endButton: new Button({
 				text: 'OK',
-				press: this.onReplaceTemplate
+				press: function(oEvent) {
+					var sValue = dialog.getContent()[1].getProperty("value");
+					this.onReplaceTemplate(oModel, sKey, sValue);
+					dialog.close();
+				}.bind(this)
 			}),
 			afterClose: function() {
 				dialog.destroy();
@@ -207,8 +217,12 @@ sap.ui.define([
 
 	};
 
-	oController.prototype.onReplaceTemplate = function(oEvent) {
-		console.log(oEvent);
+	oController.prototype.onReplaceTemplate = function(oModel, sKey, sValue) {
+		
+			var aSetData = oModel.getProperty("/SetData");
+
+		oModel.setProperty(("/SetData/0/" + sKey), sValue);
+
 	}
 
 	return oController;
